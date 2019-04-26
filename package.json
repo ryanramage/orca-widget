@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "dev": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "dependencies": {
+    "electron": "^4.1.4",
+    "tone": "^13.4.9"
+  },
+  "devDependencies": {
+    "cssnano": "^4.1.10",
+    "parcel": "^1.12.3"
+  }
+}
