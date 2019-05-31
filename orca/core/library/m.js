@@ -1,24 +1,20 @@
 'use strict'
 
-const Operator = require('../operator')
+import Operator from '../operator.js'
 
-function OperatorM (orca, x, y, passive) {
+export default function OperatorM (orca, x, y, passive) {
   Operator.call(this, orca, x, y, 'm', passive)
 
-  this.name = 'modulo'
-  this.info = 'Outputs the modulo of input.'
+  this.name = 'multiply'
+  this.info = 'Outputs product of inputs'
 
-  this.ports.input.val = { x: 1, y: 0 }
-  this.ports.input.mod = { x: 2, y: 0 }
-  this.ports.output = { x: 0, y: 1 }
+  this.ports.a = { x: -1, y: 0 }
+  this.ports.b = { x: 1, y: 0 }
+  this.ports.output = { x: 0, y: 1, sensitive: true }
 
-  this.run = function () {
-    const val = this.listen(this.ports.input.val, true)
-    const mod = this.listen(this.ports.input.mod, true)
-    const key = val % (mod !== 0 ? mod : 1)
-    const res = orca.keyOf(key)
-    this.output(`${res}`)
+  this.operation = function (force = false) {
+    const a = this.listen(this.ports.a, true)
+    const b = this.listen(this.ports.b, true)
+    return orca.keyOf(a * b)
   }
 }
-
-module.exports = OperatorM

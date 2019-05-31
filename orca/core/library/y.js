@@ -1,24 +1,18 @@
 'use strict'
 
-const Operator = require('../operator')
+import Operator from '../operator.js'
 
-function OperatorY (orca, x, y, passive) {
+export default function OperatorY (orca, x, y, passive) {
   Operator.call(this, orca, x, y, 'y', passive)
 
   this.name = 'jymper'
-  this.info = 'Outputs the westward operator.'
+  this.info = 'Outputs westward operand'
 
-  this.ports.haste.val = { x: -1, y: 0 }
+  this.ports.val = { x: -1, y: 0 }
   this.ports.output = { x: 1, y: 0 }
 
-  this.haste = function () {
+  this.operation = function (force = false) {
     orca.lock(this.x + 1, this.y)
-  }
-
-  this.run = function () {
-    const val = this.listen(this.ports.haste.val)
-    this.output(val)
+    return this.listen(this.ports.val)
   }
 }
-
-module.exports = OperatorY

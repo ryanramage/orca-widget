@@ -1,7 +1,6 @@
 'use strict'
 
-
-function Udp (terminal) {
+export default function Udp (terminal) {
   this.stack = []
   this.port = null
   this.options = { default: 49161, orca: 49160 }
@@ -11,17 +10,20 @@ function Udp (terminal) {
   }
 
   this.clear = function () {
+    this.stack = []
   }
 
   this.run = function () {
+    for (const id in this.stack) {
+      this.play(this.stack[id])
+    }
   }
 
   this.send = function (msg) {
-    window.udp(msg)
+    this.stack.push(msg)
   }
 
   this.play = function (data) {
-    console.log('play', data)
   }
 
   this.select = function (port = this.options.default) {
@@ -30,6 +32,5 @@ function Udp (terminal) {
   this.update = function () {
   }
 
-}
 
-module.exports = Udp
+}

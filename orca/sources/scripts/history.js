@@ -1,6 +1,6 @@
 'use strict'
 
-function History () {
+export default function History () {
   this.index = 0
   this.frames = []
   this.host = null
@@ -62,7 +62,13 @@ function History () {
     this.frames.shift()
   }
 
+  this.last = function () {
+    return this.frames[this.index - 1]
+  }
+
+  this.length = function () {
+    return this.frames.length
+  }
+
   function clamp (v, min, max) { return v < min ? min : v > max ? max : v }
 }
-
-module.exports = History

@@ -1,24 +1,21 @@
 'use strict'
 
-const Operator = require('../operator')
+import Operator from '../operator.js'
 
-function OperatorR (orca, x, y, passive) {
+export default function OperatorR (orca, x, y, passive) {
   Operator.call(this, orca, x, y, 'r', passive)
 
   this.name = 'random'
-  this.info = 'Outputs a random value.'
+  this.info = 'Outputs random value'
 
-  this.ports.input.min = { x: 1, y: 0 }
-  this.ports.input.max = { x: 2, y: 0 }
-  this.ports.output = { x: 0, y: 1 }
+  this.ports.min = { x: -1, y: 0 }
+  this.ports.max = { x: 1, y: 0 }
+  this.ports.output = { x: 0, y: 1, sensitive: true }
 
-  this.run = function () {
-    const min = this.listen(this.ports.input.min, true)
-    const max = this.listen(this.ports.input.max, true)
-    const val = parseInt((Math.random() * (max - min)) + min)
-    const res = orca.keyOf(val)
-    this.output(`${res}`)
+  this.operation = function (force = false) {
+    const min = this.listen(this.ports.min, true)
+    const max = this.listen(this.ports.max, true)
+    const val = parseInt((Math.random() * ((max > 0 ? max : 36) - min)) + min)
+    return orca.keyOf(val)
   }
 }
-
-module.exports = OperatorR

@@ -2,11 +2,11 @@
 
 import Operator from '../operator.js'
 
-export default function OperatorMidi (orca, x, y, passive) {
-  Operator.call(this, orca, x, y, ':', true)
+export default function OperatorMono (orca, x, y, passive) {
+  Operator.call(this, orca, x, y, '%', true)
 
-  this.name = 'midi'
-  this.info = 'Sends MIDI note'
+  this.name = 'mono'
+  this.info = 'Sends MIDI monophonic note'
 
   this.ports.channel = { x: 1, y: 0, clamp: { min: 0, max: 16 } }
   this.ports.octave = { x: 2, y: 0, clamp: { min: 0, max: 8 } }
@@ -39,10 +39,10 @@ export default function OperatorMidi (orca, x, y, passive) {
 
     this.draw = false
 
-    orca.terminal.io.midi.send(channel, octave, note, velocity, length)
+    terminal.io.mono.send(channel, octave, note, velocity, length)
 
     if (force === true) {
-      terminal.io.midi.run()
+      terminal.io.mono.run()
     }
   }
 }

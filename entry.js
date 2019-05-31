@@ -1,15 +1,11 @@
-const Terminal = require('./orca/sources/scripts/terminal')
+const Terminal = require('./orca/sources/scripts/terminal').default
+console.log(Terminal)
 const terminal = new Terminal()
-const Pilot = require('./pilot/sources/scripts/pilot')
-const pilot = new Pilot()
 
 window.onload = function () {
 
   terminal.install(document.getElementById('orcaShell'))
   terminal.start()
-
-  pilot.install(document.getElementById('pilotShell'))
-  pilot.start()
 
   function open (url) {
     window.fetch(url).then(resp => resp.text()).then(text => {

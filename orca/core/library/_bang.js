@@ -1,18 +1,16 @@
 'use strict'
 
-const Operator = require('../operator')
+import Operator from '../operator.js'
 
-function OperatorBang (orca, x, y, passive) {
+export default function OperatorBang (orca, x, y, passive) {
   Operator.call(this, orca, x, y, '*', true)
 
   this.name = 'bang'
-  this.info = 'Bangs neighboring operators.'
+  this.info = 'Bangs neighboring operands'
   this.draw = false
 
-  this.haste = function () {
-    this.passive = true
+  this.run = function (force = false) {
+    this.draw = false
     this.erase()
   }
 }
-
-module.exports = OperatorBang

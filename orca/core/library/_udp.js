@@ -1,28 +1,36 @@
 'use strict'
 
-const Operator = require('../operator')
+import Operator from '../operator.js'
 
-function OperatorUdp (orca, x, y, passive) {
+export default function OperatorUdp (orca, x, y, passive) {
   Operator.call(this, orca, x, y, ';', true)
 
   this.name = 'udp'
-  this.info = 'Sends a UDP message.'
+  this.info = 'Sends UDP message'
 
-  this.haste = function () {
-    this.msg = ''
+  this.operation = function (force = false) {
+    if (!this.hasNeighbor('*') && force === false) { return }
+
     for (let x = 1; x <= 36; x++) {
       const g = orca.glyphAt(this.x + x, this.y)
       if (g === '.') { break }
       orca.lock(this.x + x, this.y)
-      this.msg += g
+    }
+
+    let msg = ''
+    for (let x = 1; x <= 36; x++) {
+      const g = orca.glyphAt(this.x + x, this.y)
+      if (g === '.') { break }
+      msg += g
+    }
+
+    if (msg === '') { return }
+
+    this.draw = false
+    terminal.io.udp.send(msg)
+
+    if (force === true) {
+      terminal.io.udp.run()
     }
   }
-
-  this.run = function (force = false) {
-    if (!this.bang() && force === false) { return }
-    this.draw = false
-    orca.terminal.io.udp.send(this.msg)
-  }
 }
-
-module.exports = OperatorUdp

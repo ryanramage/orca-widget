@@ -1,26 +1,21 @@
 'use strict'
 
-const Operator = require('../operator')
+import Operator from '../operator.js'
 
-function OperatorX (orca, x, y, passive) {
+export default function OperatorX (orca, x, y, passive) {
   Operator.call(this, orca, x, y, 'x', passive)
 
-  this.name = 'teleport'
-  this.info = 'Writes a distant operator with offset.'
+  this.name = 'write'
+  this.info = 'Writes operand with offset'
 
-  this.ports.haste.x = { x: -2, y: 0 }
-  this.ports.haste.y = { x: -1, y: 0 }
-  this.ports.input.val = { x: 1, y: 0 }
-  this.ports.output = { x: 0, y: 1, unlock: true }
+  this.ports.x = { x: -2, y: 0 }
+  this.ports.y = { x: -1, y: 0 }
+  this.ports.val = { x: 1, y: 0 }
 
-  this.run = function () {
-    const x = this.listen(this.ports.haste.x, true)
-    const y = this.listen(this.ports.haste.y, true) + 1
-    this.ports.output = { x: x, y: y, unlock: true }
-
-    const res = this.listen(this.ports.input.val)
-    this.output(`${res}`, true)
+  this.operation = function (force = false) {
+    const x = this.listen(this.ports.x, true)
+    const y = this.listen(this.ports.y, true) + 1
+    this.ports.output = { x: x, y: y }
+    return this.listen(this.ports.val)
   }
 }
-
-module.exports = OperatorX

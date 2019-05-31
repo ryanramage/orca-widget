@@ -1,24 +1,22 @@
 'use strict'
 
-const Operator = require('../operator')
+import Operator from '../operator.js'
 
-function OperatorZ (orca, x, y, passive) {
+export default function OperatorZ (orca, x, y, passive) {
   Operator.call(this, orca, x, y, 'z', passive)
 
-  this.name = 'zoom'
-  this.info = 'Moves eastwardly, respawns west on collision.'
-  this.draw = false
+  this.name = 'lerp'
+  this.info = 'Transitions operand to target'
 
-  this.haste = function () {
-    if (orca.glyphAt(this.x + 1, this.y) === '.') { this.move(1, 0); return }
-    for (var x = this.x; x >= 0; x--) {
-      const g = orca.glyphAt(x - 1, this.y)
-      if (g === '.' && x !== 0) { continue }
-      orca.write(x, this.y, 'Z')
-      this.erase()
-      break
-    }
+  this.ports.rate = { x: -1, y: 0, default: '1' }
+  this.ports.target = { x: 1, y: 0 }
+  this.ports.output = { x: 0, y: 1, sensitive: true, reader: true }
+
+  this.operation = function (force = false) {
+    const rate = this.listen(this.ports.rate, true)
+    const target = this.listen(this.ports.target, true)
+    const val = this.listen(this.ports.output, true)
+    const mod = val <= target - rate ? rate : val >= target + rate ? -rate : target - val
+    return orca.keyOf(val + mod)
   }
 }
-
-module.exports = OperatorZ

@@ -1,18 +1,16 @@
 'use strict'
 
-const Operator = require('../operator')
+import Operator from '../operator.js'
 
-function OperatorN (orca, x, y, passive) {
+export default function OperatorN (orca, x, y, passive) {
   Operator.call(this, orca, x, y, 'n', passive)
 
   this.name = 'north'
-  this.info = 'Moves Northward, or bangs.'
+  this.info = 'Moves Northward, or bangs'
   this.draw = false
 
-  this.haste = function () {
+  this.operation = function () {
     this.move(0, -1)
     this.passive = false
   }
 }
-
-module.exports = OperatorN

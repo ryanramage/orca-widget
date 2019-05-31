@@ -4,7 +4,6 @@
     "build": "parcel build index.html"
   },
   "dependencies": {
-    "electron": "^4.1.4",
     "tone": "^13.4.9"
   },
   "devDependencies": {

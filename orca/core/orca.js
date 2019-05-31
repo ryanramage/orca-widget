@@ -1,22 +1,19 @@
 'use strict'
 
-const library = require('./library')
+import library from './library.js'
 
-function Orca (terminal, host = null) {
+export default function Orca (terminal) {
   this.w = 1 // Default Width
   this.h = 1 // Default Height
+  this.f = 0 // Frame
   this.s = '' // String
-  this.f = host ? host.f : 0 // Frame
-
-  this.host = host
 
   this.terminal = terminal
-  console.log('setting orca terminal', terminal)
   this.keys = Object.keys(library).slice(0, 36)
 
   this.locks = []
-  this.values = {}
   this.runtime = []
+  this.variables = {}
 
   this.run = function () {
     this.runtime = this.parse()
@@ -28,14 +25,14 @@ function Orca (terminal, host = null) {
     this.f = 0
     this.w = w
     this.h = h
-    this.s = new Array((this.h * this.w) + 1).join('.')
+    this.replace(new Array((this.h * this.w) + 1).join('.'))
   }
 
   this.load = function (w, h, s, f = 0) {
     this.w = w
     this.h = h
     this.f = f
-    this.s = this.clean(s)
+    this.replace(this.clean(s))
     return this
   }
 
@@ -43,18 +40,20 @@ function Orca (terminal, host = null) {
     if (!g) { return false }
     if (g.length !== 1) { return false }
     if (!this.inBounds(x, y)) { return false }
-    if (!this.isAllowed(g)) { return false }
     if (this.glyphAt(x, y) === g) { return false }
     const index = this.indexAt(x, y)
-    this.s = this.s.substr(0, index) + g + this.s.substr(index + g.length)
+    const glyph = !this.isAllowed(g) ? '.' : g
+    const string = this.s.substr(0, index) + glyph + this.s.substr(index + 1)
+    this.replace(string)
     return true
   }
 
   this.clean = function (str) {
-    let s = `${str}`
-    s = s.replace(/\n/g, '').trim()
-    s = s.substr(0, this.w * this.h)
-    return s
+    return `${str}`.replace(/\n/g, '').trim().substr(0, this.w * this.h)
+  }
+
+  this.replace = function (s) {
+    this.s = s
   }
 
   // Operators
@@ -76,7 +75,7 @@ function Orca (terminal, host = null) {
   this.cast = function (g, x, y) {
     if (g === '.') { return }
     if (!library[g.toLowerCase()]) { return }
-    const passive = g === g.toUpperCase() && this.valueOf(g) > 9
+    const passive = g === g.toUpperCase()
     return new library[g.toLowerCase()](this, x, y, passive)
   }
 
@@ -85,15 +84,7 @@ function Orca (terminal, host = null) {
     for (const id in operators) {
       const operator = operators[id]
       if (this.lockAt(operator.x, operator.y)) { continue }
-      if (operator.passive || operator.bang()) {
-        operator.haste()
-        operator.permissions()
-      }
-    }
-    for (const id in operators) {
-      const operator = operators[id]
-      if (this.lockAt(operator.x, operator.y)) { continue }
-      if (operator.passive || operator.bang()) {
+      if (operator.passive || operator.hasNeighbor('*')) {
         operator.run()
       }
     }
@@ -118,7 +109,7 @@ function Orca (terminal, host = null) {
 
   this.release = function () {
     this.locks = new Array(this.w * this.h)
-    this.values = {}
+    this.variables = {}
   }
 
   this.unlock = function (x, y) {
@@ -140,12 +131,12 @@ function Orca (terminal, host = null) {
     return g === '.' || !!library[`${g}`.toLowerCase()]
   }
 
-  this.keyOf = function (val) {
-    return this.keys[val % 36]
+  this.keyOf = function (val, uc = false) {
+    return uc === true ? this.keys[val % 36].toUpperCase() : this.keys[val % 36]
   }
 
   this.valueOf = function (g) {
-    return clamp(this.keys.indexOf(`${g}`.toLowerCase()), 0, 35)
+    return g === '.' ? 0 : this.keys.indexOf(`${g}`.toLowerCase())
   }
 
   this.indexAt = function (x, y) {
@@ -160,24 +151,23 @@ function Orca (terminal, host = null) {
     return { x: index % this.w, y: parseInt(index / this.w) }
   }
 
-  this.glyphAt = function (x, y, req = null) {
+  this.glyphAt = function (x, y) {
     return this.s.charAt(this.indexAt(x, y))
+  }
+
+  this.valueAt = function (x, y) {
+    return this.valueOf(this.glyphAt(x, y))
   }
 
   this.lockAt = function (x, y) {
     return this.locks[this.indexAt(x, y)] === true
   }
 
-  // Tools
-
-  this.inspect = function (limit = terminal.grid.w) {
-    const str = Object.keys(this.values).filter((key) => { return this.values[key] !== '.' }).join('')
-    if (str.length < limit) {
-      return fill(str, limit, '.')
-    }
-    const key = this.f % str.length
-    return str.slice(key) + str.substr(0, key)
+  this.valueIn = function (key) {
+    return this.variables[key]
   }
+
+  // Tools
 
   this.format = function () {
     const a = []
@@ -189,14 +179,17 @@ function Orca (terminal, host = null) {
     }, '')
   }
 
+  this.length = function () {
+    return this.strip().length
+  }
+
+  this.strip = function () {
+    return this.s.replace(/[^a-zA-Z0-9+]+/gi, '').trim()
+  }
+
   this.toString = function () {
     return this.format().trim()
   }
 
   this.reset()
-
-  function clamp (v, min, max) { return v < min ? min : v > max ? max : v }
-  function fill (str, len, chr) { while (str.length < len) { str += chr }; return str }
 }
-
-module.exports = Orca

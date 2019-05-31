@@ -1,34 +1,30 @@
 'use strict'
 
-const Operator = require('../operator')
+import Operator from '../operator.js'
 
-function OperatorL (orca, x, y, passive) {
+export default function OperatorL (orca, x, y, passive) {
   Operator.call(this, orca, x, y, 'l', passive)
 
   this.name = 'loop'
-  this.info = 'Loops a number of eastward operators.'
+  this.info = 'Moves eastward operands'
 
-  this.ports.haste.len = { x: -1, y: 0 }
+  this.ports.step = { x: -2, y: 0, default: '1' }
+  this.ports.len = { x: -1, y: 0 }
+  this.ports.val = { x: 1, y: 0 }
+  this.ports.output = { x: 0, y: 1 }
 
-  this.haste = function () {
-    this.len = this.listen(this.ports.haste.len, true)
-    for (let x = 1; x <= this.len; x++) {
-      orca.lock(this.x + x, this.y)
+  this.operation = function (force = false) {
+    const len = this.listen(this.ports.len, true)
+    const step = this.listen(this.ports.step, true)
+    const index = orca.indexAt(this.x + 1, this.y)
+    const seg = orca.s.substr(index, len)
+    const res = seg.substr(len - step, step) + seg.substr(0, len - step)
+    for (let offset = 0; offset <= len; offset++) {
+      if (offset > 0) {
+        orca.lock(this.x + offset, this.y)
+      }
+      orca.write(this.x + offset + 1, this.y, res.charAt(offset))
     }
-  }
-
-  this.run = function () {
-    this.len = this.listen(this.ports.haste.len, true)
-    const a = []
-    for (let x = 1; x <= this.len; x++) {
-      a.push(orca.glyphAt(this.x + x, this.y))
-    }
-    a.push(a.shift())
-    for (const id in a) {
-      const x = parseInt(id) + 1
-      orca.write(this.x + x, this.y, a[id])
-    }
+    return this.listen(this.ports.val)
   }
 }
-
-module.exports = OperatorL
