@@ -8,6 +8,12 @@
   },
   "devDependencies": {
     "cssnano": "^4.1.10",
-    "parcel": "^1.12.3"
+    "parcel": "^1.12.3",
+    "parcel-plugin-sw-precache2": "^0.1.5"
+  },
+  "sw": {
+    "fileName": "service-worker.js",
+    "minify": true,
+    "cacheId": "awesome-cache"
   }
 }

@@ -7,6 +7,19 @@ window.onload = function () {
   terminal.install(document.getElementById('orcaShell'))
   terminal.start()
 
+
+  console.log('checking serviceworker')
+  if ('serviceWorker' in navigator) {
+    console.log('register')
+    navigator.serviceWorker.register('service-worker.js')
+    .then(function(registration) {
+      console.log('Registered:', registration);
+    })
+    .catch(function(error) {
+      console.log('Registration failed: ', error);
+    });
+  }
+
   function open (url) {
     window.fetch(url).then(resp => resp.text()).then(text => {
       const lines = text.split('\n')
@@ -29,5 +42,7 @@ window.onload = function () {
   if (!url.length) return
   url = decodeURIComponent(url.substring(1))
   open(url)
+
+
 
 }
