@@ -1,0 +1,1 @@
+{"version":3,"sources":["fonts.css"],"names":[],"mappings":"AAEA,WACE,6BAAgC,CAChC,iEAAmE,CACnE,eAAmB,CACnB,iBACF","file":"fonts.bf36ba62.css","sourceRoot":"..","sourcesContent":["/* Input */\n\n@font-face {\n  font-family: 'input_mono_medium';\n  src: url('../media/fonts/input_mono_medium.ttf') format('truetype');\n  font-weight: normal;\n  font-style: normal;\n}"]}

@@ -1,0 +1,1 @@
+{"version":3,"sources":["theme.css"],"names":[],"mappings":"AAAA,KAAO,4CAA8C","file":"theme.b225d49c.css","sourceRoot":"..","sourcesContent":["body { background-color:var(--background) !important }\n"]}

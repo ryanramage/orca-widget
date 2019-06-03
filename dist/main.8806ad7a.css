@@ -1,0 +1,2 @@
+body{font-family:input_mono_medium;padding:30px;overflow:hidden;transition:background-color .5s;background-size:cover;background-position:50%;max-height:calc(100% - 60px)}body,canvas{-webkit-app-region:drag}canvas{display:block;white-space:pre;font-size:11px;line-height:10px;text-transform:uppercase;width:300px;opacity:0;transition:opacity 1s}canvas.ready{opacity:1}
+/*# sourceMappingURL=/main.8806ad7a.css.map */
