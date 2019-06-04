@@ -120,7 +120,7 @@ export default function Clock (terminal) {
 
   this.clearTimer = function () {
     if (this.timer) {
-      //this.timer.terminate()
+      clearInterval(this.timer)
     }
     this.timer = null
   }
