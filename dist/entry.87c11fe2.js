@@ -4545,25 +4545,26 @@ function Clock(terminal) {
     pulse.last = null;
     this.setTimer(this.speed.value);
   }; // Timer
-  // this.setTimer = function (bpm) {
-  //   console.log('Clock', 'New Timer ' + bpm + 'bpm')
-  //   this.clearTimer()
-  //   this.timer = new Worker(`${__dirname}/scripts/timer.js`)
-  //   this.timer.postMessage((60000 / bpm) / 4)
-  //   this.timer.onmessage = (event) => { terminal.run() }
-  // }
 
 
   this.setTimer = function (bpm) {
+    console.log('Clock', 'New Timer ' + bpm + 'bpm');
     this.clearTimer();
-    this.timer = setInterval(function () {
+    this.timer = new Worker("/timer.3438a9a2.js");
+    this.timer.postMessage(60000 / bpm / 4);
+
+    this.timer.onmessage = function (event) {
       terminal.run();
-    }, 60000 / bpm / 4);
-  };
+    };
+  }; // this.setTimer = function (bpm) {
+  //   this.clearTimer()
+  //   this.timer = setInterval(() => { terminal.run(); }, (60000 / bpm) / 4)
+  // }
+
 
   this.clearTimer = function () {
     if (this.timer) {
-      clearInterval(this.timer);
+      this.timer.terminate();
     }
 
     this.timer = null;
@@ -4598,7 +4599,7 @@ function Clock(terminal) {
     return v < min ? min : v > max ? max : v;
   }
 }
-},{"path":"node_modules/path-browserify/index.js"}],"node_modules/parcel/src/builtins/_empty.js":[function(require,module,exports) {
+},{"path":"node_modules/path-browserify/index.js","./timer.js":[["timer.3438a9a2.js","orca/sources/scripts/timer.js"],"timer.3438a9a2.js.map","orca/sources/scripts/timer.js"]}],"node_modules/parcel/src/builtins/_empty.js":[function(require,module,exports) {
 
 },{}],"node_modules/node-libs-browser/node_modules/punycode/punycode.js":[function(require,module,exports) {
 var global = arguments[3];
@@ -7099,7 +7100,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58584" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54490" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -105,22 +105,22 @@ export default function Clock (terminal) {
 
   // Timer
 
-  // this.setTimer = function (bpm) {
-  //   console.log('Clock', 'New Timer ' + bpm + 'bpm')
-  //   this.clearTimer()
-  //   this.timer = new Worker(`${__dirname}/scripts/timer.js`)
-  //   this.timer.postMessage((60000 / bpm) / 4)
-  //   this.timer.onmessage = (event) => { terminal.run() }
-  // }
-
   this.setTimer = function (bpm) {
+    console.log('Clock', 'New Timer ' + bpm + 'bpm')
     this.clearTimer()
-    this.timer = setInterval(() => { terminal.run(); }, (60000 / bpm) / 4)
+    this.timer = new Worker(`timer.js`)
+    this.timer.postMessage((60000 / bpm) / 4)
+    this.timer.onmessage = (event) => { terminal.run() }
   }
+
+  // this.setTimer = function (bpm) {
+  //   this.clearTimer()
+  //   this.timer = setInterval(() => { terminal.run(); }, (60000 / bpm) / 4)
+  // }
 
   this.clearTimer = function () {
     if (this.timer) {
-      clearInterval(this.timer)
+       this.timer.terminate()
     }
     this.timer = null
   }
