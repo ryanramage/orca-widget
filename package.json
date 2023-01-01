@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "cssnano": "^4.1.10",
-    "parcel": "^1.12.3",
+    "parcel": "^2.8.2",
     "parcel-plugin-sw-precache2": "^0.1.5"
   },
   "sw": {
